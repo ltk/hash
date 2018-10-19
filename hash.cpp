@@ -68,7 +68,7 @@ bool set_kvp(hash_table* tbl, string key, string value) {
 }
 
 float load(hash_table* tbl) {
-  return 0.0; // TODO
+  return (float)tbl->size / (float)tbl->capacity;
 }
 
 string get_val(hash_table* tbl, std::string key) {
