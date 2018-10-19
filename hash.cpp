@@ -98,7 +98,29 @@ string get_val(hash_table* tbl, std::string key) {
 }
 
 bool contains(hash_table* tbl, std::string key) {
-  return false; // TODO
+  // Compute a hashcode for the key.
+  unsigned int hashcode = tbl->hash_func(key);
+
+  // Get a bucket index.
+  unsigned int fetch_index = tbl->bucket_func(hashcode, tbl->capacity);
+
+  // If nothing is present at the index, it's not in there.
+  if (!tbl->table[fetch_index]) {
+    return false;
+  }
+
+  // Linear proving to find the right item by hashcode.
+  while(tbl->table[fetch_index] && tbl->table[fetch_index]->hashcode != hashcode) {
+    fetch_index = (fetch_index + 1 )% tbl->capacity;
+  }
+
+  // If we have a node, return true.
+  if (tbl->table[fetch_index]) {
+    return true;
+  }
+
+  // If we still have nothing, return false.
+  return false;
 }
 
 bool remove(hash_table* tbl, std::string key) {
