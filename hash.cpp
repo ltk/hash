@@ -153,6 +153,49 @@ bool remove(hash_table* tbl, std::string key) {
 
 void resize(hash_table* tbl, unsigned int new_capacity) {
   // TODO - extra credit
+  // resize creates a new underlying backing array (tbl->table) with the
+  // provided new capacity, rehashes the existing backing array into the
+  // new array. on exit, the hash table's fields and functions
+  // accurately reflect the hash table's current state.
+  //
+  // this is an extra-credit function.
+
+  // Make a new storage array, and set all values to NULL.
+  hash_node** new_table = new hash_node*[new_capacity];
+  for (int i = 0; i < new_capacity; i++) {
+    new_table[i] = NULL;
+  }
+
+  // Run through existing storage array and place each node into the new table.
+  for (int i = 0; i < tbl->capacity; i++) {
+    if (tbl->table[i]) {
+      // We have a node here.
+  
+      hash_node* node = tbl->table[i];
+      string key = node->key;
+      string value = node->value;
+      unsigned int hashcode = tbl->hash_func(key);
+      node->hashcode = hashcode;
+
+      // Find bucket to place in.
+      int insert_index = tbl->bucket_func(hashcode, new_capacity);
+
+      // Linear Probing
+      while(new_table[insert_index] && new_table[insert_index]->hashcode != hashcode) {
+        insert_index = (insert_index + 1) % new_capacity;
+      }
+
+      // Insert the thing!
+      new_table[insert_index] = node;
+    }
+  }
+
+  // Delete the old storage array.
+  delete tbl->table;
+
+  // Set the new storage array and capacity.
+  tbl->table = new_table;
+  tbl->capacity = new_capacity;
 }
 
 // implemented for you - feel free to change this one
