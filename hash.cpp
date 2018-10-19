@@ -6,11 +6,26 @@
 using namespace std;
 
 hash_table* init_table(unsigned int cap) {
-  return NULL; // TODO
+  hash_table* table = new hash_table;
+  table->capacity = cap;
+  table->size = 0;
+  table->occupied = 0;
+  table->hash_func = djb2;
+  table->bucket_func = modulo_bucket_func;
+  table->table = new hash_node*[cap];
+  for (int i = 0; i < cap; i++) {
+    table->table[i] = NULL;
+  }
+  return table;
 }
 
 hash_node* init_node(std::string key, unsigned int hashcode, std::string val) {
-  return NULL; // TODO
+  hash_node* node = new hash_node;
+  node->deleted = false;
+  node->key = key;
+  node->hashcode = hashcode;
+  node->value = val;
+  return node;
 }
 
 bool set_kvp(hash_table* tbl, string key, string value) {
