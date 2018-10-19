@@ -29,7 +29,42 @@ hash_node* init_node(std::string key, unsigned int hashcode, std::string val) {
 }
 
 bool set_kvp(hash_table* tbl, string key, string value) {
-  return false; // TODO
+  // If we're at capacity already, it ain't gonna fit.
+  cout << "Occupied: " << tbl->occupied << endl;
+  if (tbl->capacity == tbl->occupied) {
+    return false;
+  }
+
+  // Compute hashcode.
+  unsigned int hashcode = tbl->hash_func(key);
+
+  hash_node* node = init_node(key, hashcode, value);
+
+  // Find bucket to place in.
+  int insert_index = tbl->bucket_func(hashcode, tbl->capacity);
+
+  // Linear Probing
+  while(tbl->table[insert_index] && tbl->table[insert_index]->hashcode != hashcode) {
+    insert_index = (insert_index + 1) % tbl->capacity;
+  }
+
+  insert_index = insert_index % tbl->capacity;
+
+  cout << "adding to index " << insert_index << endl;
+
+  if (!tbl->table[insert_index]) {
+    // Increment the table's size + occupied, but only if we added to on empty slot.
+    tbl->size++;
+    tbl->occupied++;
+  }
+
+  // Insert the thing!
+  tbl->table[insert_index] = node;
+
+  
+
+  // All is well in the universe.
+  return true;
 }
 
 float load(hash_table* tbl) {
