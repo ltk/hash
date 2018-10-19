@@ -72,7 +72,29 @@ float load(hash_table* tbl) {
 }
 
 string get_val(hash_table* tbl, std::string key) {
-  return ""; // TODO
+  // Compute a hashcode for the key.
+  unsigned int hashcode = tbl->hash_func(key);
+
+  // Get a bucket index.
+  unsigned int fetch_index = tbl->bucket_func(hashcode, tbl->capacity);
+
+  // If nothing is present at the index, it's not in there.
+  if (!tbl->table[fetch_index]) {
+    return "";
+  }
+
+  // Linear proving to find the right item by hashcode.
+  while(tbl->table[fetch_index] && tbl->table[fetch_index]->hashcode != hashcode) {
+    fetch_index = (fetch_index + 1 )% tbl->capacity;
+  }
+
+  // If we have a node, return its value.
+  if (tbl->table[fetch_index]) {
+    return tbl->table[fetch_index]->value;
+  }
+
+  // If we still have nothing, return the empty string.
+  return "";
 }
 
 bool contains(hash_table* tbl, std::string key) {
